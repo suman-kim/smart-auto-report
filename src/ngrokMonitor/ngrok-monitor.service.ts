@@ -32,8 +32,8 @@ export class NgrokMonitorService implements OnModuleInit {
 
         const fromX = "Ngrok URL 변경 감지";
         const to = 'zzsdsdsd@focusai.co.kr';
-        const subject = `Ngrok URL 새 URL: ${currentUrl}`;
-        const text = `Ngrok URL 변경 감지: ${savedUrl} → ${currentUrl}`;
+        const subject = `Ngrok URL 새 URL: ${currentUrl}/upload`;
+        const text = `Ngrok URL 변경 감지: ${savedUrl}/upload → ${currentUrl}/upload`;
 
         try {
           await this.emailService.send(fromX, to, subject, text);
