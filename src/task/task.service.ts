@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { NotionService } from '../notion/notion.service';
 import dayjs from '../utils/dayjs.setup';
 import { NotionTaskDto } from '../dto/notion-task.dto';
-import * as nodemailer from 'nodemailer';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import { Dayjs } from 'dayjs';
@@ -176,7 +175,6 @@ export class TaskService {
   private async sendEmailWithAttachment(month:string,week:number,htmlPath: string): Promise<void> {
 
     const fromX = '"FOCUS 업무 보고서" <noreply@example.com>';
-    const to = 'zzsdsdsd@focusai.co.kr';
     const subject = `[작업 보고서] ${month}월 ${week}주차 업무일지 보고서`;
     const text = `📅 ${month}월 ${week}주차 작업 목록이 첨부되어 있습니다. 확인해주세요.`;
     const attachementList:MailAttachmentDTO[] = [{
@@ -185,7 +183,7 @@ export class TaskService {
       contentType: 'text/html',
     }];
 
-    await this.mailerService.send(fromX,to,subject,text,attachementList);
+    await this.mailerService.send(fromX,subject,text,attachementList);
 
     this.logger.log('✅ 이메일 전송 완료');
   }

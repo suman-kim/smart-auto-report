@@ -10,6 +10,9 @@ export class TaskSchedulerService {
 
   constructor(private readonly taskService: TaskService) {}
 
+  /**
+   * 매일 오전 10시에 실행되는 주간업무 보고 메일 발송 작업
+   */
   @Cron(CronExpression.EVERY_DAY_AT_10AM)
   async handleWeeklyTask() {
     const today = dayjs().tz('Asia/Seoul');
@@ -23,6 +26,11 @@ export class TaskSchedulerService {
     }
   }
 
+  /**
+   * 공휴일 여부를 확인하는 메서드
+   * @param date
+   * @private
+   */
   private async isHoliday(date: dayjs.Dayjs): Promise<boolean> {
     const serviceKey = process.env.KOREA_HOLIDAY_API_KEY;
     const targetDate = date.format('YYYYMMDD');
@@ -40,6 +48,10 @@ export class TaskSchedulerService {
     }
   }
 
+  /**
+   * 오늘이 메일 발송 대상인지 확인하는 메서드
+   * @private
+   */
   private async checkShouldSendEmailToday(): Promise<boolean> {
     const today = dayjs();
     const dayOfWeek = today.day(); // 0: 일요일 ~ 6: 토요일

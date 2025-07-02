@@ -21,7 +21,6 @@ export class UploadService {
 
     //메일 발송
     const fromX = '"OCR 시스템" <noreply@example.com>';
-    const to = 'zzsdsdsd@focusai.co.kr';
     const subject = `[OCR 결과] ${file.originalname}`;
     const body = `📷 파일 이름: ${file.originalname}\n📝 OCR 내용:\n\n${text}`;
     const attachments:MailAttachmentDTO[] = [{
@@ -29,7 +28,7 @@ export class UploadService {
       path: file.path,
       contentType: 'image/jpeg',
     }];
-    await this.mailerService.send(fromX,to,subject,body,attachments);
+    await this.mailerService.send(fromX,subject,body,attachments);
 
 
     return {

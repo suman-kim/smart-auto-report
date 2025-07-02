@@ -4,7 +4,6 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { OcrService } from 'src/ocr/ocr.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';

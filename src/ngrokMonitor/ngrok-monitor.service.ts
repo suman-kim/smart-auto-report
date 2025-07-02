@@ -13,11 +13,11 @@ export class NgrokMonitorService implements OnModuleInit {
   constructor(private readonly emailService: MailerService) {}
 
   async onModuleInit() {
-    await this.monitorNgrokUrl(); // 최초 1회 실행
+    //await this.monitorNgrokUrl(); // 최초 1회 실행
   }
 
   //3시간마다
-  @Cron(CronExpression.EVERY_3_HOURS)
+  //@Cron(CronExpression.EVERY_3_HOURS)
   async handleCron() {
     await this.monitorNgrokUrl(); // 주기적 실행
   }
@@ -31,12 +31,11 @@ export class NgrokMonitorService implements OnModuleInit {
         this.logger.log(`🔄 URL 변경 감지됨: ${savedUrl} → ${currentUrl}`);
 
         const fromX = "Ngrok URL 변경 감지";
-        const to = 'zzsdsdsd@focusai.co.kr';
         const subject = `Ngrok URL 새 URL: ${currentUrl}/upload`;
         const text = `Ngrok URL 변경 감지: ${savedUrl}/upload → ${currentUrl}/upload`;
 
         try {
-          await this.emailService.send(fromX, to, subject, text);
+          await this.emailService.send(fromX, subject, text);
         } catch (mailErr) {
           this.logger.error('📨 이메일 전송 실패', mailErr);
         }
@@ -59,12 +58,11 @@ export class NgrokMonitorService implements OnModuleInit {
     } catch (error) {
       //4040포트 연결 불가 메일 전송
       const fromX = "❌ ngrok에 접근 실패";
-      const to = 'zzsdsdsd@focusai.co.kr';
       const subject = `Ngrok 4040포트 연결 불가`;
       const text = `Ngrok 4040포트 연결 불가`;
 
       try {
-        await this.emailService.send(fromX, to, subject, text);
+        await this.emailService.send(fromX, subject, text);
       } catch (mailErr) {
         this.logger.error('📨 이메일 전송 실패', mailErr);
       }

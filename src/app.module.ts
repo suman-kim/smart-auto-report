@@ -8,6 +8,10 @@ import { TaskModule } from './task/task.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MailerModule } from './mailer/mailer.module';
 import { NgrokMonitorModule } from './ngrokMonitor/ngrok-monitor.module';
+import { OpenAIModule } from './openai/openai.module';
+import { AiCrawlerController } from './ai-crawler/ai-crawler.controller';
+import { AiCrawlerModule } from './ai-crawler/ai-crawler.module';
+import { PersonalNotionModule } from './notion/personal-notion.module';
 @Module({
   imports: [UploadModule,
     NotionModule,
@@ -15,7 +19,11 @@ import { NgrokMonitorModule } from './ngrokMonitor/ngrok-monitor.module';
     MailerModule,
     NgrokMonitorModule,
     ScheduleModule.forRoot(),
-    ConfigModule.forRoot({ isGlobal: true })], // .env 자동 로드
+    OpenAIModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    AiCrawlerModule,
+    PersonalNotionModule], // .env 자동 로드
+
   controllers: [AppController],
   providers: [AppService],
 })

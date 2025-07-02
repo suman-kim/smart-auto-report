@@ -4,6 +4,9 @@ import { NotionTaskDto } from '../dto/notion-task.dto';
 import axios from 'axios';
 import dayjs from '../utils/dayjs.setup';
 
+/**
+ * 회사용 Notion API 서비스
+ */
 @Injectable()
 export class NotionService {
   private readonly notionToken: string;
