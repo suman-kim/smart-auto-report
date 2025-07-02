@@ -12,6 +12,7 @@ import { OpenAIModule } from './openai/openai.module';
 import { AiCrawlerController } from './ai-crawler/ai-crawler.controller';
 import { AiCrawlerModule } from './ai-crawler/ai-crawler.module';
 import { PersonalNotionModule } from './notion/personal-notion.module';
+import { IpMonitorModule } from './ipMonitor/ip-monitor.module';
 @Module({
   imports: [UploadModule,
     NotionModule,
@@ -22,7 +23,8 @@ import { PersonalNotionModule } from './notion/personal-notion.module';
     OpenAIModule,
     ConfigModule.forRoot({ isGlobal: true }),
     AiCrawlerModule,
-    PersonalNotionModule], // .env 자동 로드
+    PersonalNotionModule,
+    IpMonitorModule], // .env 자동 로드
 
   controllers: [AppController],
   providers: [AppService],
