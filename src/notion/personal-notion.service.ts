@@ -2,20 +2,29 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Client } from '@notionhq/client';
 import { AiModel } from '../dto/ai-model.dto';
+import { IdeaDto } from '../dto/idea.dto';
 
 @Injectable()
 export class PersonalNotionService {
   private readonly logger = new Logger(PersonalNotionService.name);
   private readonly notion: Client;
+  // AI 모델 갤러리 데이터베이스 ID
   private readonly databaseId: string;
+  // 생각 정리 & 아이디어 저장용 데이터베이스 ID
+  private readonly ideaDatabaseId: string;
 
   constructor(private configService: ConfigService) {
     this.notion = new Client({
       auth: this.configService.get<string>('PERSONAL_NOTION_API_KEY'),
     });
     this.databaseId = this.configService.get<string>('PERSONAL_NOTION_DATABASE_ID');
+    this.ideaDatabaseId = this.configService.get<string>('PERSONAL_NOTION_IDEA_DATABASE_ID');
   }
 
+  /**
+   * AI 모델 정보를 노션에 저장합니다.
+   * @param models - 저장할 AI 모델 정보 배열
+   */
   async saveToNotion(models: AiModel[]): Promise<void> {
     try {
       this.logger.log(`노션에 ${models.length}개 모델 저장 시작`);
@@ -32,6 +41,10 @@ export class PersonalNotionService {
     }
   }
 
+  /**
+   * AI 모델 정보를 노션에 저장하거나 업데이트합니다.
+   * @param model - 저장할 AI 모델 정보
+   */
   private async saveOrUpdateModel(model: AiModel): Promise<void> {
     try {
       // 중복 체크: 같은 모델명 있는지 확인
@@ -41,8 +54,7 @@ export class PersonalNotionService {
         // 기존 페이지 업데이트
         await this.updateExistingModel(existingPage.id, model);
         this.logger.log(`기존 모델 업데이트: ${model.modelName}`);
-      }
-      else {
+      } else {
         // 새 페이지 생성
         await this.createNewModel(model);
         this.logger.log(`새 모델 생성: ${model.modelName}`);
@@ -52,6 +64,11 @@ export class PersonalNotionService {
     }
   }
 
+  /**
+   * 노션 데이터베이스에서 기존 AI 모델을 검색합니다.
+   * @param modelName - 검색할 모델명
+   * @returns 기존 모델 페이지 정보 또는 null
+   */
   private async findExistingModel(modelName: string): Promise<any> {
     try {
       const response = await this.notion.databases.query({
@@ -75,6 +92,10 @@ export class PersonalNotionService {
     }
   }
 
+  /**
+   * AI 모델 정보를 노션에 새 페이지로 생성합니다.
+   * @param model - 생성할 AI 모델 정보
+   */
   private async createNewModel(model: AiModel): Promise<void> {
     const properties = this.buildNotionProperties(model);
 
@@ -102,6 +123,11 @@ export class PersonalNotionService {
     });
   }
 
+  /**
+   * 기존 AI 모델 정보를 노션 페이지로 업데이트합니다.
+   * @param pageId - 업데이트할 페이지 ID
+   * @param model - 업데이트할 AI 모델 정보
+   */
   private async updateExistingModel(pageId: string, model: AiModel): Promise<void> {
     const properties = this.buildNotionProperties(model);
 
@@ -111,6 +137,11 @@ export class PersonalNotionService {
     });
   }
 
+  /**
+   * AI 모델 정보를 노션 페이지 속성으로 변환합니다.
+   * @param model - AI 모델 정보
+   * @returns 노션 페이지 속성 객체
+   */
   private buildNotionProperties(model: AiModel): any {
     return {
       '모델명': {
@@ -123,7 +154,7 @@ export class PersonalNotionService {
         ]
       },
       '개발사': {
-        select:{
+        select: {
           name: model.developer
         }
       },
@@ -187,64 +218,86 @@ export class PersonalNotionService {
         ]
       },
       '무료 플랜': {
-        select:{
-          name:model.freePlan
+        select: {
+          name: model.freePlan
         }
       }
     };
   }
 
-  // 노션 데이터베이스 스키마 자동 생성 (최초 설정용)
-  async createDatabase(): Promise<string> {
+  /**
+   * 생각 정리 및 아이디어 저장용 데이터베이스에 아이디어를 생성합니다.
+   * @param ideaData - 아이디어 데이터
+   * @returns 생성된 페이지 정보
+   */
+  async createIdea(ideaData: IdeaDto) {
     try {
-      const response = await this.notion.databases.create({
+
+      const properties = this.buildIdeaProperties(ideaData);
+      // 아이디어 데이터 유효성 검사
+      const response = await this.notion.pages.create({
         parent: {
-          type: 'page_id',
-          page_id: this.configService.get<string>('NOTION_PARENT_PAGE_ID')
+          database_id: this.ideaDatabaseId,
         },
-        title: [
-          {
-            type: 'text',
-            text: {
-              content: 'AI 모델 데이터베이스'
-            }
-          }
-        ],
-        properties: {
-          '모델명': { title: {} },
-          '개발사': { rich_text: {} },
-          '출시일': { date: {} },
-          '모델 유형': {
-            select: {
-              options: [
-                { name: '텍스트 생성', color: 'blue' },
-                { name: '이미지 생성', color: 'green' },
-                { name: '음성 인식', color: 'yellow' },
-                { name: '비디오 생성', color: 'red' },
-                { name: '멀티모달', color: 'purple' },
-                { name: '코드 생성', color: 'orange' }
-              ]
-            }
-          },
-          '파라미터 수': { rich_text: {} },
-          '주요 특징': { multi_select: {} },
-          '사용 사례': { multi_select: {} },
-          '모델 URL': { url: {} },
-          '이미지 URL': { url: {} },
-          '성능 평가': { rich_text: {} },
-          '접근성': { rich_text: {} },
-          '메모': { rich_text: {} },
-          '가격 정보': { rich_text: {} },
-          '무료 플랜': { checkbox: {} },
-          '업데이트 일시': { date: {} }
-        }
+        properties,
       });
 
-      this.logger.log(`노션 데이터베이스 생성 완료: ${response.id}`);
-      return response.id;
+      this.logger.log(`아이디어 저장 성공: ${ideaData.content.substring(0, 20)}...`);
+      return response;
     } catch (error) {
-      this.logger.error('노션 데이터베이스 생성 실패:', error);
-      throw error;
+      throw new Error(`노션 저장 실패: ${error.message}`);
+    }
+  }
+
+
+  private buildIdeaProperties(ideaData: IdeaDto) {
+
+    return {
+      // 제목 (아이디어 내용의 첫 50자)
+      '제목': {
+        title: [
+          {
+            text: {
+              content: ideaData.content.substring(0, 10)
+            },
+          },
+        ],
+      },
+      '내용':{
+        rich_text: [
+          {
+            text: {
+              content: ideaData.content,
+            },
+          },
+        ],
+      },
+      // 진행상태
+      '진행상태': {
+        status: {
+          name: ideaData.status,
+        },
+      },
+      // 위치
+      '위치': {
+        rich_text: [
+          {
+            text: {
+              content: ideaData.location,
+            },
+          },
+        ],
+      },
+      // 키워드
+      '키워드': {
+        multi_select: ideaData.keywords.map(keyword => ({ name: keyword })),
+      },
+      // 생성일 (텍스트 형식)
+      '생성일': {
+        date: {
+          start: ideaData.createdAt,
+        },
+      }
     }
   }
 }

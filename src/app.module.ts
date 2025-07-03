@@ -13,6 +13,7 @@ import { AiCrawlerController } from './ai-crawler/ai-crawler.controller';
 import { AiCrawlerModule } from './ai-crawler/ai-crawler.module';
 import { PersonalNotionModule } from './notion/personal-notion.module';
 import { IpMonitorModule } from './ipMonitor/ip-monitor.module';
+import { IdeaModule } from './idea/idea.module';
 @Module({
   imports: [UploadModule,
     NotionModule,
@@ -24,7 +25,8 @@ import { IpMonitorModule } from './ipMonitor/ip-monitor.module';
     ConfigModule.forRoot({ isGlobal: true }),
     AiCrawlerModule,
     PersonalNotionModule,
-    IpMonitorModule], // .env 자동 로드
+    IpMonitorModule,
+    IdeaModule], // .env 자동 로드
 
   controllers: [AppController],
   providers: [AppService],

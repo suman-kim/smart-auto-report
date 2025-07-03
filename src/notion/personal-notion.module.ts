@@ -6,6 +6,7 @@ import { PersonalNotionService } from './personal-notion.service';
   imports: [],
   providers:[PersonalNotionService],
   controllers: [PersonalNotionController],
+  exports: [PersonalNotionService], // 다른 모듈에서도 사용 가능하게
 })
 
 export class PersonalNotionModule {
