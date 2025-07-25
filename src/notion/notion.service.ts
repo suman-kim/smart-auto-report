@@ -42,6 +42,7 @@ export class NotionService {
 
       return dateFilteredList;
     } catch (error) {
+      console.log(error);
       this.logger.error('Notion DB 조회 실패', error);
       throw new Error('Failed to fetch Notion data');
     }
