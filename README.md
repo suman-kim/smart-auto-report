@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" />
-</p>
-
 <h1 align="center">📊 Smart Auto Report</h1>
 
 <p align="center">
