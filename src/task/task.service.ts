@@ -45,7 +45,7 @@ export class TaskService {
 
       const resultList:NotionTaskDto[] = sortedList.concat(sortedNextWeekTaskList);
 
-      if (notionTaskList.length > 0) {
+      //if (notionTaskList.length > 0) {
 
         const yyyymmdd:string = dayjs().format('YYYY-MM-DD');
         const now:Dayjs = dayjs(yyyymmdd);
@@ -60,7 +60,7 @@ export class TaskService {
         const html = this.generateHtml(year,month,weekOfMonth,sortedList,sortedNextWeekTaskList);
         const htmlPath = await this.writeHtmlToFile(year,month,weekOfMonth,html);
         await this.sendEmailWithAttachment(month,weekOfMonth,htmlPath);
-      }
+      //}
       return resultList;
     }
     catch (err){
