@@ -9,11 +9,6 @@
   NestJS 기반의 업무 자동화 및 AI 통합 백엔드 서비스
 </p>
 
-    <p align="center">
-  <img src="https://img.shields.io/badge/NestJS-10.x-E0234E?style=flat-square&logo=nestjs" alt="NestJS" />
-  <img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/OpenAI-GPT--4-412991?style=flat-square&logo=openai" alt="OpenAI" />
-  <img src="https://img.shields.io/badge/Notion-API-000000?style=flat-square&logo=notion" alt="Notion" />
 </p>
 
 ---
